@@ -5,7 +5,14 @@ open Lwt.Syntax
 
 type t = KV.t
 exception Error
-type v = Dir of v | File of string
+type v = Dir of (string -> v option) | File of string
+
+let rec to_key t l =
+  match l with
+  | [] -> t
+  | hd :: tl ->
+    let hd = String.map (fun c -> if c = '/' then '_' else c) hd in
+    to_key (Mirage_kv.Key.add t hd) tl
 
 let make () =
   Lwt_direct.direct (fun () ->
@@ -15,16 +22,16 @@ let make () =
     | Ok t -> t
     | Error _ -> assert(false))
 
-let get t k =
+let get t p =
   Lwt_direct.direct (fun () ->
-    let+ res = KV.get t (Mirage_kv.Key.v k) in
+    let+ res = KV.get t (to_key Mirage_kv.Key.empty p) in
     match res with
     | Ok t -> Some t
     | Error _ -> None)
 
-let set t k s =
+let set t p s =
   Lwt_direct.direct (fun () ->
-    let+ res = KV.set t (Mirage_kv.Key.v k) s in
+    let+ res = KV.set t (to_key Mirage_kv.Key.empty p) s in
     match res with
     | Ok t -> Some t
     | Error _ -> None)

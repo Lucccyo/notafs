@@ -1,5 +1,5 @@
 (test
  (name test_kv)
  (package notafs)
- (libraries lwt notafs lwt_direct mirage-clock-unix mirage-block-unix qcheck-core qcheck-stm.sequential ortac-runtime lwt.unix))
+ (libraries lwt notafs lwt_direct mirage-clock-unix mirage-block-unix qcheck-core qcheck-stm.sequential ortac-runtime ortac-runtime-qcheck-stm lwt.unix))
 

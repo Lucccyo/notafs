@@ -21,16 +21,16 @@ type t
 
 (*@ function rec mget (t : v) (path : string list) : string option =
     match t, path with
-  | File c, [] -> Some c
-  | Dir dir, s :: path ->
-    (match dir s with
-     | Some t -> mget t path
-     | None -> None)
-  | _, _ -> None *)
+    | File c, [] -> Some c
+    | Dir dir, s :: path ->
+      (match dir s with
+       | Some t -> mget t path
+       | None -> None)
+    | _, _ -> None *)
 
 val make: unit -> t
 (*@ t = make ()
-   ensures t.contents = Dir (fun _ -> None) *)
+    ensures t.contents = Dir (fun _ -> None) *)
 
 val get: t -> key -> string option
 (*@ s = get t p
@@ -42,3 +42,8 @@ val set: t -> key -> string -> unit option
     modifies t.contents
     ensures t.contents = mset (old t.contents) p s
     raises Error -> false *)
+
+val disconnect_reconnect: t -> unit
+(*@ disconnect_reconnect t
+    modifies t.contents
+    ensures t.contents = old t.contents *)
